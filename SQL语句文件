@@ -220,10 +220,16 @@ FROM S
 WHERE DEPT = '计算机';
 
 --例3.42 查询各位教师的教师号及其任课的门数。
-
+SELECT TNO, COUNT(*) AS TCOURSE_NUMBER
+FROM T, TC
+WHERE T.TNO = TC.TNO
+GROUP BY TNO;
 
 --例3.43 查询选修两门以上课程的学生学号和选课门数
-
+SELECT SNO, COUNT(*) AS CCOURSE_NUMBER
+FROM SC 
+GROUP BY SNO
+HAVING COUNT(*) > 2;
 
 --例3.44 查询选修C1 的学生学号和成绩，并按成绩降序排列。
 SELECT SNO, SCORE
@@ -238,7 +244,11 @@ WHERE CNO IN('C2', 'C3', 'C4', 'C5');
 ORDER BY SNO, SCORE DESC;
 
 --例3.46 求选课在三门以上且各门课程均及格的学生的学号及其总成绩，查询结果按总成绩降序列出。
-
+SELECT SNO, SUM(SCORE) AS TOTAL_SCORE
+FROM SC 
+WHERE SCORE >= 60
+GROUP BY SNO
+HAVING COUNT(*) > 3;
 
 --例3.47 查询刘伟老师所讲授的课程。
 SELECT CN
@@ -266,6 +276,14 @@ WHERE S.SNO = SC.SNO AND C.CNO = SC.CNO;
 
 --例3.51 查询所有学生的学号、姓名、选课名称及成绩。（查询结果应包括所有的学生，没有选课的同学的选课信息显示为空）
 
+/*
+
+--例3.48 查询所有选课学生的学号、姓名、选课名称及成绩。
+SELECT SNO, SN, CN, SCORE
+FROM S, C, SC
+WHERE S.SNO = SC.SNO AND C.CNO = SC.CNO;
+
+*/
 
 --例3.52 查询与刘伟教师职称相同的教师号、姓名。
 SELECT TNO, TN
@@ -366,10 +384,15 @@ WHERE TNO = (SELECT TNO
 			 WHERE TN = '刘伟')；
 
 --例3.71 创建一个计算机系教师情况的视图SUB_T。
-
+CREATE VIEW SUB_T AS
+SELECT TNO, TN, TSEX, TAGE, PROF, SAL, COMM
+FROM T
+WHERE DEPT = '计算机'；
 
 --例3.72 创建一学生情况视图S_SC_C（包括学号、姓名、课程名及成绩）。
-
+CREATE VIEW S_SC_C 
+SELECT SNO, SN, CN, SCORE
+FROM
 
 --例3.73 创建一学生平均成绩视图S_AVG
 
