@@ -1,25 +1,11 @@
-/*
-
-******** Created by yutao-ma on 2017/5/10 *********
-
-*/
-
-
-
-CREATE DATABASE UNIVERSITY
-
-USE UNIVERSITY
-
-GO
-
 DROP TABLE S;
 CREATE TABLE S	--学生关系
 (
 	SNO		CHAR(5)		NOT NULL	PRIMARY KEY,	--学号
 	SN 		CHAR(20)	NOT NULL,	--姓名
 	SSEX	CHAR(10)	NOT NULL,	--性别
-	SAGE	INTEGER		NOT NULL,	--年龄
-	DEPT	CHAR(15)	NOT NULL	--系别
+	SAGE	INTEGER				,	--年龄
+	DEPT	CHAR(15)				--系别
 );
 
 INSERT INTO S VALUES('S1', '赵亦', '女', 17, '计算机');
@@ -28,9 +14,6 @@ INSERT INTO S VALUES('S3', '孙珊', '女', 20, '信息');
 INSERT INTO S VALUES('S4', '李思', '男', 21, '自动化');
 INSERT INTO S VALUES('S5', '周武', '男', 19, '计算机');
 INSERT INTO S VALUES('S6', '吴丽', '女', 20, '自动化');
-
-
-
 
 DROP TABLE C;
 CREATE TABLE C 		--课程关系
@@ -72,8 +55,6 @@ INSERT INTO SC VALUES('S4', 'C2', 85);
 INSERT INTO SC VALUES('S4', 'C3', 83);
 INSERT INTO SC VALUES('S5', 'C2', 89);
 
-
-
 DROP TABLE TC;
 CREATE TABLE TC		--授课关系
 (
@@ -96,13 +77,13 @@ DROP TABLE T;
 CREATE TABLE T 		--教师关系
 (
 	TNO		CHAR(5)		NOT NULL	PRIMARY KEY,	--教师号
-	TN 		CHAR(20)	NOT NULL,	--教师姓名
-	TSEX	CHAR(10)	NOT NULL, 	--教师性别
-	TAGE	INTEGER		NOT NULL,	--年龄
-	PROF	CHAR(10)	NOT NULL,	--职称
-	SAL		INTEGER		NOT NULL,	--工资
-	COMM	INTEGER		NOT NULL,	--岗津
-	DEPT	CHAR(15)	NOT NULL	--系别
+	TN 		CHAR(20)	,	--教师姓名
+	TSEX	CHAR(10)	, 	--教师性别
+	TAGE	INTEGER		,	--年龄
+	PROF	CHAR(10)	,	--职称
+	SAL		INTEGER		,	--工资
+	COMM	INTEGER		,	--岗津
+	DEPT	CHAR(15)		--系别
 );
 
 
@@ -111,6 +92,8 @@ INSERT INTO T VALUES('T2', '王平', '女', 28, '讲师',	 800,	1200, '信息');
 INSERT INTO T VALUES('T3', '刘伟', '男', 30, '讲师',	 900, 	1200, '计算机');
 INSERT INTO T VALUES('T4', '张雪', '女', 51, '教授',	 1600, 	3000, '自动化');
 INSERT INTO T VALUES('T5', '张兰', '女', 39, '副教授',	 1300, 	2000, '信息');
+
+
 
 
 
@@ -123,7 +106,6 @@ INSERT INTO T VALUES('T5', '张兰', '女', 39, '副教授',	 1300, 	2000, '信�
 部
 分
 */
-
 
 --例3.21 查询全体学生的学号、姓名和年龄。
 SELECT SNO, SN, SAGE
@@ -152,8 +134,8 @@ FROM SC
 WHERE SCORE > 85;
 
 --例3.27 查询选修C1或C2且分数大于等于85分学生的的学号、课程号和成绩。
-SELECT SNO, CNO,SCORE
-FROM SCORE
+SELECT SNO, CNO, SCORE
+FROM SC
 WHERE (CNO = 'C1' AND SCORE > 85) OR (CNO = 'C2' AND SCORE > 85);
 
 --例3.28 查询工资在1000至1500之间的教师的教师号、姓名及职称。
@@ -179,12 +161,12 @@ WHERE NOT CNO IN ('C1', 'C2');  -- <> OR !=
 --例3.32 查询所有姓张的教师的教师号和姓名。
 SELECT TNO, TN
 FROM T
-WHERE TN LIKE '张%'；
+WHERE TN LIKE '张%';
 
 --例3.33 查询姓名中第二个汉字是“力”的教师号和姓名。
 SELECT TNO, TN
 FROM T
-WHERE TN LIKE '__力%'；
+WHERE TN LIKE '_力%';
 
 --例3.34 查询没有考试成绩的学生的学号和相应的课程号。
 SELECT SNO, CNO
@@ -219,11 +201,11 @@ SELECT COUNT(*) AS CS_NUMBER
 FROM S
 WHERE DEPT = '计算机';
 
---例3.42 查询各位教师的教师号及其任课的门数。
-SELECT TNO, COUNT(*) AS TCOURSE_NUMBER
+--例3.42 查询各位教师的教师号及其任课的门数。                                            
+SELECT T.TNO, COUNT(*) AS TCOURSE_NUMBER
 FROM T, TC
 WHERE T.TNO = TC.TNO
-GROUP BY TNO;
+GROUP BY T.TNO;
 
 --例3.43 查询选修两门以上课程的学生学号和选课门数
 SELECT SNO, COUNT(*) AS CCOURSE_NUMBER
@@ -240,15 +222,16 @@ ORDER BY SCORE DESC;
 --例3.45 查询选修C2、C3、C4或C5课程的学号、课程号和成绩，查询结果按学号升序排列，学号相同再按成绩降序排列。
 SELECT SNO, CNO, SCORE
 FROM SC 
-WHERE CNO IN('C2', 'C3', 'C4', 'C5');
+WHERE CNO IN('C2', 'C3', 'C4', 'C5')
 ORDER BY SNO, SCORE DESC;
 
 --例3.46 求选课在三门以上且各门课程均及格的学生的学号及其总成绩，查询结果按总成绩降序列出。
-SELECT SNO, SUM(SCORE) AS TOTAL_SCORE
+SELECT SNO, SUM(SCORE) AS TOTAL_SCORE                                             
 FROM SC 
 WHERE SCORE >= 60
 GROUP BY SNO
-HAVING COUNT(*) > 3;
+HAVING COUNT(*) > 3
+ORDER BY TOTAL_SCORE DESC;
 
 --例3.47 查询刘伟老师所讲授的课程。
 SELECT CN
@@ -256,7 +239,7 @@ FROM C, TC, T
 WHERE T.TNO = TC.TNO AND TC.CNO = C.CNO AND TN = '刘伟';
 
 --例3.48 查询所有选课学生的学号、姓名、选课名称及成绩。
-SELECT SNO, SN, CN, SCORE
+SELECT S.SNO, SN, CN, SCORE                                                        
 FROM S, C, SC
 WHERE S.SNO = SC.SNO AND C.CNO = SC.CNO;
 
@@ -276,21 +259,16 @@ WHERE S.SNO = SC.SNO AND C.CNO = SC.CNO;
 
 --例3.51 查询所有学生的学号、姓名、选课名称及成绩。（查询结果应包括所有的学生，没有选课的同学的选课信息显示为空）
 
-/*
-
---例3.48 查询所有选课学生的学号、姓名、选课名称及成绩。
-SELECT SNO, SN, CN, SCORE
+SELECT S.SNO, SN, CN, SCORE                                           --!!!!!!!!!!!!!!!BUG             
 FROM S, C, SC
 WHERE S.SNO = SC.SNO AND C.CNO = SC.CNO;
-
-*/
 
 --例3.52 查询与刘伟教师职称相同的教师号、姓名。
 SELECT TNO, TN
 FROM T
 WHERE PROF = (SELECT PROF
 			  FROM	T
-			  WHERE TN = '刘伟')；
+			  WHERE TN = '刘伟');
 
 --例3.53 查询讲授课程号为C5的教师姓名。
 SELECT TN
@@ -302,7 +280,7 @@ SELECT TN, SAL
 FROM T
 WHERE SAL > (SELECT MIN(SAL)
 			 FROM T
-			 WHERE DEPT = '计算机')；
+			 WHERE DEPT = '计算机');
 
 --例3.55（题目同3.53查询讲授课程号为C5的教师姓名。）
 SELECT TN
@@ -314,7 +292,7 @@ SELECT TN, SAL
 FROM T
 WHERE SAL > (SELECT MAX(SAL)
 			 FROM T
-			 WHERE DEPT = '计算机')；
+			 WHERE DEPT = '计算机');
 
 --例3.57 查询不讲授课程号为C5的教师姓名。
 SELECT TN
@@ -332,12 +310,19 @@ FROM S, SC
 WHERE S.SNO = SC.SNO;
 
 --例3.60 在S表中插入一条学生记录（学号：S7；姓名：郑冬；性别：女；年龄： 
+DELETE FROM S
+WHERE SNO = 'S7';
+
 INSERT INTO S VALUES('S7', '郑东', '女', NULL, NULL);
 
 --例3.61 在SC表中插入一条选课记录（’S7’,’C1’）。
+DELETE FROM SC
+WHERE SNO = 'S7' AND CNO = 'C1';
+
 INSERT INTO SC VALUES('S7', 'C1', NULL);
 
 --例3.62建立新表AVGSAL，包含字段DEPARTMENT和AVGSAL，分别用来存放系名和各系的平均工资。求出各系教师的平均工资，把结果存放在新表AVGSAL中。
+DROP TABLE AVGSAL
 CREATE TABLE AVGSAL 
 (
 	DEPARTMENT CHAR(15) NOT NULL PRIMARY KEY,
@@ -347,7 +332,7 @@ CREATE TABLE AVGSAL
 --例3.63 把刘伟教师转到信息系。
 UPDATE T
 SET DEPT = '信息'
-WHERE TN = '刘伟'；
+WHERE TN = '刘伟';
 
 --例3.64 将所有学生年龄增加1岁
 UPDATE S
@@ -361,7 +346,7 @@ WHERE SAL <= 1000;
 --例3.66 把讲授C5课程的教师的岗位津贴增加100元。
 UPDATE T
 SET COMM = COMM + 1
-WHERE TNO = (SELECT TNO
+WHERE TNO IN (SELECT TNO
 			 FROM TC
 			 WHERE CNO = 'C5');
 
@@ -372,7 +357,7 @@ SET SAL = (SELECT AVG(SAL)
 
 --例3.68  删除刘伟教师的记录。
 DELETE FROM T
-WHERE TN = '刘伟'；
+WHERE TN = '刘伟';
 
 --例3.69 删除所有教师的授课记录
 DELETE FROM TC;
@@ -381,35 +366,56 @@ DELETE FROM TC;
 DELETE FROM TC
 WHERE TNO = (SELECT TNO
 			 FROM T
-			 WHERE TN = '刘伟')；
+			 WHERE TN = '刘伟');
 
 --例3.71 创建一个计算机系教师情况的视图SUB_T。
+DROP VIEW SUB_T;
 CREATE VIEW SUB_T AS
 SELECT TNO, TN, TSEX, TAGE, PROF, SAL, COMM
 FROM T
-WHERE DEPT = '计算机'；
+WHERE DEPT = '计算机';
 
 --例3.72 创建一学生情况视图S_SC_C（包括学号、姓名、课程名及成绩）。
-CREATE VIEW S_SC_C 
-SELECT SNO, SN, CN, SCORE
-FROM
+CREATE VIEW S_SC_C AS                                                 
+SELECT S.SNO, SN, CN, SCORE
+FROM S, C, SC
+WHERE C.CNO = SC.CNO AND S.SNO = SC.SNO;
 
 --例3.73 创建一学生平均成绩视图S_AVG
-
+DROP VIEW S_AVG;
+CREATE VIEW S_AVG AS
+SELECT SNO, AVG(SCORE) AS SAVG
+FROM SC
+GROUP BY SNO;
 
 --例3.74 删除计算机系教师情况的视图SUB_T。
+DROP VIEW SUB_T;
 
 
 --例3.75　查找视图SUB_T中职称为教授的教师号和姓名。
-
+SELECT TNO, TN
+FROM SUB_T
+WHERE PROF = '教授';
 
 --例3.76  向计算机系教师视图SUB_T中插入一条记录（教师号：T6；姓名：李丹；职称：副教授）。
+INSERT INTO SUB_T(TNO, 
+				  TN,
+				  PROF)
+VALUES('T6', 
+	   '李丹', 
+	   '副教授');
 
 
 --例3.77  将计算机系教师视图SUB_T中刘伟的职称改为“副教授“。
-
+UPDATE SUB_T
+SET PROF = '副教授'
+WHERE TN = '刘伟';
 
 --例3.78  删除计算机系教师视图SUB_T中刘伟教师的记录。
+DELETE FROM SUB_T
+WHERE TN = '刘伟';
+
+
 
 
 
