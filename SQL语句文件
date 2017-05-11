@@ -259,9 +259,13 @@ WHERE S.SNO = SC.SNO AND C.CNO = SC.CNO;
 
 --例3.51 查询所有学生的学号、姓名、选课名称及成绩。（查询结果应包括所有的学生，没有选课的同学的选课信息显示为空）
 
-SELECT S.SNO, SN, CN, SCORE                                           --!!!!!!!!!!!!!!!BUG             
-FROM S, C, SC
-WHERE S.SNO = SC.SNO AND C.CNO = SC.CNO;
+SELECT S.SNO, SN, CN, SCORE                                                      
+FROM S
+LEFT OUTER JOIN SC
+ON S.SNO = SC.SNO
+LEFT OUTER JOIN C
+ON C.CNO = SC.CNO;
+
 
 --例3.52 查询与刘伟教师职称相同的教师号、姓名。
 SELECT TNO, TN
@@ -414,20 +418,5 @@ WHERE TN = '刘伟';
 --例3.78  删除计算机系教师视图SUB_T中刘伟教师的记录。
 DELETE FROM SUB_T
 WHERE TN = '刘伟';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
