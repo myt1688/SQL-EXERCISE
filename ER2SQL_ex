@@ -1,0 +1,150 @@
+/*
+
+******************CREATED BY YUTAO-MA ON 2017/5/25**************
+
+*/
+
+/*
+
+对于时间的数据类型和select方式还有待考量
+还有对于getdate（）函数的使用
+
+*/
+
+
+CREATE DATABASE My_Hotel_Company
+USE My_Hotel_Company
+GO
+
+CREATE TABLE HOTEL
+(
+	hotelNo		ChAR(5)		NOT NULL	PRIMARY KEY, 
+	hotelName	CHAR(20)	NOT NULL,
+	city		CHAR(5)		NOT NULL
+);
+
+INSERT INTO HOTEL VALUES('H1', 'NAME_A', '上海');
+INSERT INTO HOTEL VALUES('H2', 'NAME_B', '上海');
+INSERT INTO HOTEL VALUES('H3', 'NAME_C', '北京');
+INSERT INTO HOTEL VALUES('H4', 'NAME_D', '北京');
+INSERT INTO HOTEL VALUES('H5', 'NAME_E', '北京');
+INSERT INTO HOTEL VALUES('H6', 'NAME_F', '上海');
+INSERT INTO HOTEL VALUES('H7', 'NAME_G', '上海');
+INSERT INTO HOTEL VALUES('H8', 'Grosvenor', '上海');
+
+
+
+DROP TABLE ROOM
+CREATE TABLE ROOM
+(
+	roomNo		CHAR(5)		NOT NULL	PRIMARY KEY, 
+	hotelNo		CHAR(5)		NOT NULL,
+	hoteltype	CHAR(20)	NOT NULL,
+	price		INTEGER		NOT NULL
+);
+INSERT INTO ROOM VALUES('R1', 'H1', '三人间', 1000);
+INSERT INTO ROOM VALUES('R2', 'H1', '双人间', 400);
+INSERT INTO ROOM VALUES('R3', 'H1', '双人间', 100);
+INSERT INTO ROOM VALUES('R4', 'H4', '双人间', 1200);
+INSERT INTO ROOM VALUES('R5', 'H4', '双人间', 300);
+INSERT INTO ROOM VALUES('R6', 'H8', '双人间', 300);
+INSERT INTO ROOM VALUES('R7', 'H8', '双人间', 1000);
+INSERT INTO ROOM VALUES('R8', 'H8', '双人间', 400);
+
+DROP TABLE GUEST
+CREATE TABLE GUEST
+(
+	guestNo		 CHAR(5)		NOT NULL	PRIMARY KEY, 
+	guestName	 CHAR(20)		NOT NULL,
+	guestAddress CHAR(20)		NOT NULL
+);
+INSERT INTO GUEST VALUES('G1','GN1','上海');
+INSERT INTO GUEST VALUES('G2','GN2','上海');
+INSERT INTO GUEST VALUES('G3','GN3','上海');
+INSERT INTO GUEST VALUES('G4','GN4','上海');
+INSERT INTO GUEST VALUES('G5','GN5','北京');
+INSERT INTO GUEST VALUES('G6','GN6','上海');
+
+
+DROP TABLE Booking
+CREATE TABLE Booking
+(
+	hotelNo		CHAR(5)		NOT NULL, 
+	guestNo		CHAR(5)		NOT NULL,
+	dateFrom	CHAR(5)		NOT NULL				PRIMARY KEY(hotelNo, guestNo, dateFrom),
+	dateTo		CHAR(5)		NOT NULL,
+	roomNo		CHAR(5)		NOT NULL
+);
+
+INSERT INTO Booking VALUES('H1','G1','8.1','8.2','R2');
+INSERT INTO Booking VALUES('H8','G2','8.20','8.25','R6');
+INSERT INTO Booking VALUES('H8','G3','8.1','8.15','R7');
+INSERT INTO Booking VALUES('H8','G4','9.1','9.15','R8');
+
+
+--(1) 列出位于上海的宾馆的所有详细信息。
+SELECT *
+FROM HOTEL
+WHERE city = '上海';
+
+--(2) 列出所有的双人间或三人间，并且每晚的价格在400元以下的
+--房间编号、宾馆编号、宾馆名称和所在城市。
+SELECT roomNo, HOTEL.hotelNo, hotelName, city
+FROM HOTEL,ROOM
+WHERE HOTEL.hotelNo = ROOM.hotelNo AND hoteltype in('双人间', '三人间') AND price < 400;
+
+--(3) 检索位于上海的宾馆房间每晚的均价。
+SELECT AVG(price) AS avg_price_shanghai
+FROM ROOM,HOTEL
+WHERE HOTEL.hotelNo = ROOM.hotelNo AND city = '上海';
+
+--(4) 检索8月份共有多少不同的客人预订了房间。
+SELECT COUNT(guestNo)
+FROM Booking
+WHERE dateFrom LIKE '8%';
+
+--(5) 检索名为Grosvenor的宾馆的所有房间信息，包括编号、价格和类型。
+SELECT roomNo, price,hoteltype
+FROM HOTEL,ROOM
+WHERE HOTEL.hotelNo = ROOM.hotelNo AND hotelName = 'Grosvenor';
+
+--(6) 列出Grosvenor宾馆当前正有客人入住的那些房间的信息，包括宾馆编号、宾馆名称、所在城市以及房间编号、类型和价格。
+--（提示：当前时间用函数getdate()来获得）
+SELECT Booking.hotelNo, hotelName, city, Booking.roomNo, hoteltype, price
+FROM Booking, HOTEL, ROOM
+WHERE Booking.hotelNo = HOTEL.hotelNo AND HOTEL.hotelNo = ROOM.hotelNo;
+
+
+--(7) 检索名每个宾馆各有多少个房间，每晚均价多少。
+SELECT COUNT(roomNO) AS number ,AVG(price) AS avg_price
+FROM HOTEL,ROOM
+WHERE HOTEL.hotelNo = ROOM.hotelNo
+GROUP BY HOTEL.hotelNo;
+
+
+--(8) 八月份每个宾馆各有多少客人预订了房间?
+SELECT COUNT(guestNo) as number
+FROM Booking
+WHERE dateFrom LIKE '8%'
+GROUP BY hotelNo;
+
+--(9) 检索下个月预订了位于上海的宾馆的房间的客人的详细信息
+SELECT GUEST.guestNo,guestName,guestAddress
+FROM Booking,GUEST,ROOM,HOTEL
+WHERE Booking.guestNo = GUEST.guestNo AND Booking.roomNo = ROOM.roomNo AND HOTEL.hotelNo = ROOM.hotelNo AND dateFrom LIKE '9%' AND city = '上海';
+
+
+--(10) 将位于上海的宾馆的所有的双人间价格上调1%
+UPDATE ROOM
+SET price = price * 1.01
+WHERE hotelNo in (SELECT HOTEL.hotelNo 
+				  FROM ROOM,HOTEL
+				  WHERE HOTEL.hotelNo = ROOM.hotelNo AND city = '上海' AND hoteltype = '双人间');
+          
+          
+          
+          
+          
+          
+          
+          
