@@ -101,13 +101,13 @@ CREATE TABLE GAME
 );
 
 
-INSERT INTO GAME VALUES('GN1', 'Final Fantasy', 			'RPG',  	 5, 'Square Enix Company', '55 MB', '1987', '1.1');
+INSERT INTO GAME VALUES('GN1', 'Final Fantasy', 			'RPG',  	 5, NULL,				   '55 MB', '1987', '1.1');
 INSERT INTO GAME VALUES('GN2', 'DIRT4',						'Race', 	 2, 'Codemasters',		   '50GB',  '2017', '1.0');
 INSERT INTO GAME VALUES('GN3', 'The King Of Fighters',		'Fight',	 4, 'SNK',				   '16GB',  '2017', '1.2');
 INSERT INTO GAME VALUES('GN4', 'Rise Of The Tomb Raider',	'Act',		 3, 'Crystal Dynamics',    '25GB',  '2016', '2.3');
 INSERT INTO GAME VALUES('GN5', 'LIMBO',						'Adventure', 2,	'Playdead',			   '1GB',   '2011', '1.3');
 INSERT INTO GAME VALUES('GN6', 'Left 4 Dead',				'FPS',		 4, 'Valve',			   '7.5GB', '2008', '1.4');
-INSERT INTO GAME VALUES('GN7', 'RUST',						'SURVIVE',	 2, 'Facepunch Studios',   '8GB',   '2013', '1.5');
+INSERT INTO GAME VALUES('GN7', 'RUST',						'SURVIVE',	 2, NULL,				   '8GB',   '2013', '1.5');
 INSERT INTO GAME VALUES('GN8', 'NBA2K17',					'SPORTS',	 3, '2K',				   '70GB',  '2016', '3.2');
 INSERT INTO GAME VALUES('GN9', 'CSGO',						'FPS',		 4, 'Valve',			   '15GB',  '2012', '4.0');
 INSERT INTO GAME VALUES('GN10','GTA5',						'Act',		 1, 'Rockstar',   		   '72GB',  '2014', '2.6');
@@ -135,6 +135,8 @@ INSERT INTO GROUPS VALUES('GPN7', 'Racer',		  'GN7', 21);
 INSERT INTO GROUPS VALUES('GPN8', 'King',		  'GN8', 22);
 INSERT INTO GROUPS VALUES('GPN9', 'Saber',		  'GN9', 23);
 INSERT INTO GROUPS VALUES('GPN10','Snake',		  'GN10',24);
+INSERT INTO GROUPS VALUES('GPN11','Snake2',		  'GN10',24);
+INSERT INTO GROUPS VALUES('GPN12','FIGHTER2',	  'GN2', 24);
 
 
 
@@ -178,16 +180,16 @@ CREATE TABLE ARTICLE
 
 );
 
-INSERT INTO ARTICLE VALUES('AN1', 'How to play Final Fantasy', 			 '2017.1.4', 'GPN1', 5698);
+INSERT INTO ARTICLE VALUES('AN1', 'How to play Final Fantasy', 			 '2017.1.4', 'GPN1', 3698);
 INSERT INTO ARTICLE VALUES('AN2', 'How to play DIRT4',					 '2017.1.5', 'GPN2', 5690);
-INSERT INTO ARTICLE VALUES('AN3', 'How to play The King Of Fighters', 	 '2017.1.6', 'GPN3', 5691);
-INSERT INTO ARTICLE VALUES('AN4', 'How to play Rise Of The Tomb Raider', '2017.1.1', 'GPN4', 5692);
-INSERT INTO ARTICLE VALUES('AN5', 'How to play LIMBO',					 '2017.1.2', 'GPN5', 5693);
-INSERT INTO ARTICLE VALUES('AN6', 'How to play Left 4 Dead',			 '2017.1.3', 'GPN6', 5694);
-INSERT INTO ARTICLE VALUES('AN7', 'How to play RUST',					 '2017.1.7', 'GPN7', 5695);
+INSERT INTO ARTICLE VALUES('AN3', 'How to play The King Of Fighters', 	 '2017.1.6', 'GPN3', 9691);
+INSERT INTO ARTICLE VALUES('AN4', 'How to play Rise Of The Tomb Raider', '2017.1.1', 'GPN4', 7563);
+INSERT INTO ARTICLE VALUES('AN5', 'How to play LIMBO',					 '2017.1.2', 'GPN5', 5467);
+INSERT INTO ARTICLE VALUES('AN6', 'How to play Left 4 Dead',			 '2017.1.3', 'GPN6', 6666);
+INSERT INTO ARTICLE VALUES('AN7', 'How to play RUST',					 '2017.1.7', 'GPN7', 4695);
 INSERT INTO ARTICLE VALUES('AN8', 'How to play NBA2K17',				 '2017.1.8', 'GPN8', 5696);
-INSERT INTO ARTICLE VALUES('AN9', 'How to play CSGO',					 '2017.1.9', 'GPN9', 5697);
-INSERT INTO ARTICLE VALUES('AN10','How to play GTA5',					 '2017.1.10','GPN10',5699);
+INSERT INTO ARTICLE VALUES('AN9', 'How to play CSGO',					 '2017.1.9', 'GPN9', 2697);
+INSERT INTO ARTICLE VALUES('AN10','How to play GTA5',					 '2017.1.10','GPN10',15699);
 
 
 
@@ -291,7 +293,6 @@ SELECT *
 FROM USERS;
 
 
-
 --3. 查询所有游戏的名字，其中名称用别名name显示
 SELECT GAME_NAME AS name
 FROM GAME;
@@ -302,8 +303,8 @@ FROM ARTICLE
 WHERE GROUPS_ID = 'GPN1';
 
 
---5. 查询撰写的测评字数在5000至10000的小组编号和小组名称
-SELECT ARTICLE.GROUPS_ID, GROUPS_NAME
+--5. 查询撰写的测评字数在5000至10000的小组编号,小组名称,文章名称和字数
+SELECT ARTICLE.GROUPS_ID, GROUPS_NAME, A_Name, A_AMOUNT
 FROM ARTICLE, GROUPS
 WHERE ARTICLE.GROUPS_ID = GROUPS.GROUPS_ID AND A_AMOUNT BETWEEN 5000 AND 10000;
 
@@ -331,11 +332,10 @@ HAVING COUNT(*) > 2
 ORDER BY TOTAL DESC;
 
 
---10. 把名为empty的测评名改为 how to don’t starve
-UPDATE ARTICLE
-SET A_NAME = 'how to play don\’t starve'
-WHERE A_NAME = 'empty';
-
+--10. 把FEEDBAK表中反馈编号为FN10的状态改为“SOLVED”
+UPDATE FEEDBACK
+SET F_STATUS = 'SOLVED'
+WHERE F_ID = 'FN10';
 
 
 --11. 创建一个小组人数大于10人的视图SUB_GROUPS。
